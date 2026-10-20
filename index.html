@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatatUang - Sistem Kas Kelas</title>
+    <!-- Hubungkan ke CSS Utama -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Google (Inter) untuk Tampilan Modern -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header & Navigasi -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <span class="logo-icon">💰</span>
+                <h1>CatatUang <span class="badge-kelas">XI RPL 1</span></h1>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="nav-btn" onclick="switchTab('iuran')">Kas Siswa</button>
+                <button class="nav-btn" onclick="switchTab('transaksi')">Buku Kas</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container content-wrapper">
+
+        <!-- RINGKASAN SALDO (Ringkasan Keuangan Utama) -->
+        <section class="summary-grid">
+            <div class="card summary-card total-saldo">
+                <div class="card-icon">👛</div>
+                <div class="card-info">
+                    <p class="card-title">Total Saldo Kas</p>
+                    <h2 id="totalSaldo">Rp 0</h2>
+                </div>
+            </div>
+
+            <div class="card summary-card total-masuk">
+                <div class="card-icon">📈</div>
+                <div class="card-info">
+                    <p class="card-title">Total Uang Masuk</p>
+                    <h3 id="totalMasuk">Rp 0</h3>
+                </div>
+            </div>
+
+            <div class="card summary-card total-keluar">
+                <div class="card-icon">📉</div>
+                <div class="card-info">
+                    <p class="card-title">Total Uang Keluar</p>
+                    <h3 id="totalKeluar">Rp 0</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 1: DASHBOARD & FORM INPUT QUICK TRANSAKSI -->
+        <section id="tab-dashboard" class="tab-content active">
+            <div class="dashboard-layout">
+                
+                <!-- Form Input Transaksi (Masuk/Keluar) -->
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h3>Catat Transaksi Baru</h3>
+                    </div>
+                    <form id="formTransaksi" class="form-grid">
+                        
+                        <!-- Pilihan Jenis Transaksi -->
+                        <div class="form-group radio-group">
+                            <label>Jenis Transaksi:</label>
+                            <div class="radio-options">
+                                <label class="radio-label tipe-masuk">
+                                    <input type="radio" name="tipeTransaksi" value="MASUK" checked>
+                                    <span>Uang Masuk (+)</span>
+                                </label>
+                                <label class="radio-label tipe-keluar">
+                                    <input type="radio" name="tipeTransaksi" value="KELUAR">
+                                    <span>Uang Keluar (-)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Tanggal Transaksi -->
+                        <div class="form-group">
+                            <label for="tanggal">Tanggal</label>
+                            <input type="date" id="tanggal" required>
+                        </div>
+
+                        <!-- Kategori Transaksi -->
+                        <div class="form-group">
+                            <label for="kategori">Kategori</label>
+                            <select id="kategori" required>
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <optgroup label="Uang Masuk">
+                                    <option value="Iuran Kas">Iuran Kas Mingguan</option>
+                                    <option value="Sumbangan/Donasi">Sumbangan / Donasi</option>
+                                    <option value="Sisa Acara">Sisa Uang Acara</option>
+                                    <option value="Lain-lain (Masuk)">Lain-lain (Masuk)</option>
+                                </optgroup>
+                                <optgroup label="Uang Keluar">
+                                    <option value="Alat Tulis & Kelas">Alat Tulis / Perlengkapan Kelas</option>
+                                    <option value="Fotokopi & Modul">Fotokopi / Cetak Modul</option>
+                                    <option value="Sosial & Jenguk">Sosial / Menjenguk Teman</option>
+                                    <option value="Acara Kelas">Konsumsi / Acara Kelas</option>
+                                    <option value="Lain-lain (Keluar)">Lain-lain (Keluar)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Nominal (Rupiah) -->
+                        <div class="form-group">
+                            <label for="nominal">Nominal (Rp)</label>
+                            <input type="number" id="nominal" placeholder="Contoh: 10000" min="500" step="500" required>
+                        </div>
+
+                        <!-- Keterangan Detail -->
+                        <div class="form-group">
+                            <label for="keterangan">Keterangan / Catatan</label>
+                            <input type="text" id="keterangan" placeholder="Contoh: Beli spidol papan tulis 2 pcs" required>
+                        </div>
+
+                        <!-- Tombol Submit -->
+                        <button type="submit" class="btn btn-primary btn-block">Simpan Transaksi</button>
+                    </form>
+                </div>
+
+                <!-- Transaksi Terakhir (Quick View) -->
+                <div class="card history-quick">
+                    <div class="card-header flex-between">
+                        <h3>Transaksi Terakhir</h3>
+                        <button class="btn-text" onclick="switchTab('transaksi')">Lihat Semua →</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Tipe</th>
+                                    <th>Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelQuickTransaksi">
+                                <!-- Data transaksi terakhir dirender via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: MATRIKS KAS SISWA (IURAN MINGGUAN) -->
+        <section id="tab-iuran" class="tab-content">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h3>Matriks Pembayaran Kas Siswa</h3>
+                        <p class="sub-title">Tarif Iuran: <strong>Rp 5.000 / Minggu</strong></p>
+                    </div>
+                    <button class="btn btn-outline" onclick="window.print()">🖨️ Cetak Matriks</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table table-iuran">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Siswa</th>
+                                <th>Minggu 1</th>
+                                <th>Minggu 2</th>
+                                <th>Minggu 3</th>
+                                <th>Minggu 4</th>
+                                <th>Aksi Cepat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelKasSiswa">
+                            <!-- Data siswa dan status iuran dirender via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: BUKU KAS & RIWAYAT TRANSAKSI LENGKAP -->
+        <section id="tab-transaksi" class="tab-content">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <h3>Riwayat Buku Kas</h3>
+                    
+                    <!-- Filter Transaksi -->
+                    <div class="filter-box">
+                        <select id="filterTipe" onchange="filterTransaksi()">
+                            <option value="SEMUA">Semua Transaksi</option>
+                            <option value="MASUK">Hanya Uang Masuk</option>
+                            <option value="KELUAR">Hanya Uang Keluar</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Kategori</th>
+                                <th>Keterangan</th>
+                                <th>Tipe</th>
+                                <th>Nominal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelBukuKas">
+                            <!-- Riwayat lengkap transaksi dirender via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <p>&copy; 2026 CatatUang Kelas XI RPL 1 - Dibuat untuk Proyek Siswa SMK</p>
+        </div>
+    </footer>
+
+    <!-- Hubungkan ke file JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
